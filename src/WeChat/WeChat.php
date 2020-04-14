@@ -14,6 +14,7 @@ use EasySwoole\Pay\Exceptions\InvalidSignException;
 
 
 use EasySwoole\Pay\WeChat\RequestBean\MiniProgram as MiniProgramRequest;
+use EasySwoole\Pay\WeChat\RequestBean\JsApi as JsApiRequest; //新增 jspai
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount as OfficialAccountRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Scan as ScanRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Wap as WapRequest;
@@ -23,12 +24,12 @@ use EasySwoole\Pay\WeChat\RequestBean\OrderFind as OrderFindRequest;
 use EasySwoole\Pay\WeChat\RequestBean\RefundFind as RefundFindRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Close as CloseRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Refund as RefundRequest;
-use EasySwoole\Pay\WeChat\RequestBean\Transfer as TransferRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Download as DownloadRequest;
 use EasySwoole\Pay\WeChat\RequestBean\DownloadFundFlow as DownloadFundFlowRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Comment as CommentRequest;
 
 
+use EasySwoole\Pay\WeChat\ResponseBean\JsApi as JsApiResponse;   // 新增JSPAI支付
 use EasySwoole\Pay\WeChat\ResponseBean\OfficialAccount as OfficialAccountResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\Wap as WapResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\Scan as ScanResponse;
@@ -36,6 +37,7 @@ use EasySwoole\Pay\WeChat\ResponseBean\MiniProgram  as MiniProgramResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\App  as AppResponse;
 
 use EasySwoole\Pay\WeChat\WeChatPay\MiniProgram;
+use EasySwoole\Pay\WeChat\WeChatPay\JsApi;
 use EasySwoole\Pay\WeChat\WeChatPay\OfficialAccount;
 use EasySwoole\Pay\WeChat\WeChatPay\Scan;
 use EasySwoole\Pay\WeChat\WeChatPay\Wap;
@@ -65,7 +67,15 @@ class WeChat
     {
         return (new OfficialAccount($this->config))->pay($bean);
     }
-
+    /**
+     * JSPAI支付
+     * @param JsApiRequest $bean
+     * @return JsApiResponse
+     */
+    public function JsApi(JsApiRequest $bean): JsApiResponse
+    {
+        return (new JsApi($this->config))->pay($bean);
+    }
     /**
      * H5支付
      * @param WapRequest $bean
@@ -160,18 +170,6 @@ class WeChat
     public function refund(RefundRequest $bean): SplArray
     {
         return (new Utility($this->config))->requestApi('/secapi/pay/refund', $bean, true);
-    }
-    /**
-     * 企业打款至微信账户
-     * @param  TransferRequest $bean
-     * @return SplArray
-     * @throws GatewayException
-     * @throws InvalidSignException
-     * @throws \EasySwoole\Pay\Exceptions\InvalidArgumentException
-     */
-    public function transfer(TransferRequest $bean): SplArray
-    {
-        return (new Utility($this->config))->requestApi('/mmpaymkttransfers/promotion/transfers', $bean, true);
     }
 
     /**
